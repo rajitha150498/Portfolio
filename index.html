@@ -1,27 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MoodTune — Find Your Sound</title>
-  <link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;600;700&family=Syne:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <title>Rajitha Reddy — Developer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #080810;
-      --surface: #10101c;
-      --card: #14141f;
-      --border: rgba(255,255,255,0.07);
-      --text: #f0eef8;
-      --muted: #6b6880;
-      --font-display: 'Syne', sans-serif;
+      --bg: #0a0a0f;
+      --bg2: #111118;
+      --surface: #1a1a24;
+      --accent: #c8a96e;
+      --accent2: #e8c99e;
+      --text: #f0ece4;
+      --muted: #7a7870;
+      --line: rgba(200,169,110,0.18);
+      --font-display: 'Playfair Display', Georgia, serif;
       --font-body: 'DM Sans', sans-serif;
-
-      /* mood colors - change dynamically */
-      --mood-a: #ff6b6b;
-      --mood-b: #ff9f43;
-      --glow: rgba(255,107,107,0.18);
     }
 
     html { scroll-behavior: smooth; }
@@ -30,579 +27,652 @@
       background: var(--bg);
       color: var(--text);
       font-family: var(--font-body);
-      min-height: 100vh;
+      font-weight: 300;
       overflow-x: hidden;
-      transition: background 0.6s ease;
     }
 
-    /* animated bg blobs */
-    .blob {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(90px);
-      opacity: 0.15;
-      pointer-events: none;
-      z-index: 0;
-      transition: background 0.8s ease, opacity 0.8s ease;
-    }
-    .blob-1 {
-      width: 500px; height: 500px;
-      background: var(--mood-a);
-      top: -150px; left: -150px;
-      animation: drift1 12s ease-in-out infinite;
-    }
-    .blob-2 {
-      width: 400px; height: 400px;
-      background: var(--mood-b);
-      bottom: -100px; right: -100px;
-      animation: drift2 15s ease-in-out infinite;
-    }
-    @keyframes drift1 {
-      0%,100% { transform: translate(0,0) scale(1); }
-      50% { transform: translate(60px, 40px) scale(1.1); }
-    }
-    @keyframes drift2 {
-      0%,100% { transform: translate(0,0) scale(1); }
-      50% { transform: translate(-40px, -60px) scale(1.15); }
+    /* ── NOISE TEXTURE ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; opacity: 0.45;
     }
 
-    /* ── HEADER ── */
-    header {
-      position: relative; z-index: 10;
-      padding: 2rem 3rem 0;
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
       display: flex; justify-content: space-between; align-items: center;
+      padding: 1.4rem 3rem;
+      border-bottom: 1px solid var(--line);
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(12px);
     }
-    .logo {
+    .nav-logo {
       font-family: var(--font-display);
-      font-size: 1.4rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
+      font-style: italic;
+      font-size: 1.2rem;
+      color: var(--accent);
+      letter-spacing: 0.02em;
     }
-    .logo span { color: var(--mood-a); transition: color 0.6s; }
-    .tagline {
-      font-size: 0.78rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
+    .nav-links { display: flex; gap: 2.2rem; }
+    .nav-links a {
+      text-decoration: none;
       color: var(--muted);
+      font-size: 0.82rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s;
     }
+    .nav-links a:hover { color: var(--accent); }
 
     /* ── HERO ── */
-    .hero {
-      position: relative; z-index: 10;
-      text-align: center;
-      padding: 4rem 2rem 3rem;
+    #hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding: 0 3rem;
+      position: relative;
+      overflow: hidden;
     }
-    .hero h1 {
+
+    /* Vinyl record decoration */
+    .vinyl {
+      position: absolute;
+      right: -80px; top: 50%;
+      transform: translateY(-50%);
+      width: 520px; height: 520px;
+      border-radius: 50%;
+      background: conic-gradient(
+        from 0deg,
+        #1c1c22 0deg 5deg, #111116 5deg 10deg,
+        #1c1c22 10deg 15deg, #111116 15deg 20deg,
+        #1c1c22 20deg 25deg, #111116 25deg 30deg,
+        #1c1c22 30deg 35deg, #111116 35deg 40deg,
+        #1c1c22 40deg 45deg, #111116 45deg 50deg,
+        #1c1c22 50deg 55deg, #111116 55deg 60deg,
+        #1c1c22 60deg 65deg, #111116 65deg 70deg,
+        #1c1c22 70deg 75deg, #111116 75deg 80deg,
+        #1c1c22 80deg 85deg, #111116 85deg 90deg,
+        #1c1c22 90deg 95deg, #111116 95deg 100deg,
+        #1c1c22 100deg 105deg, #111116 105deg 110deg,
+        #1c1c22 110deg 115deg, #111116 115deg 120deg,
+        #1c1c22 120deg 125deg, #111116 125deg 130deg,
+        #1c1c22 130deg 135deg, #111116 135deg 140deg,
+        #1c1c22 140deg 145deg, #111116 145deg 150deg,
+        #1c1c22 150deg 155deg, #111116 155deg 160deg,
+        #1c1c22 160deg 165deg, #111116 165deg 170deg,
+        #1c1c22 170deg 175deg, #111116 175deg 180deg,
+        #1c1c22 180deg 185deg, #111116 185deg 190deg,
+        #1c1c22 190deg 195deg, #111116 195deg 200deg,
+        #1c1c22 200deg 205deg, #111116 205deg 210deg,
+        #1c1c22 210deg 215deg, #111116 215deg 220deg,
+        #1c1c22 220deg 225deg, #111116 225deg 230deg,
+        #1c1c22 230deg 235deg, #111116 235deg 240deg,
+        #1c1c22 240deg 245deg, #111116 245deg 250deg,
+        #1c1c22 250deg 255deg, #111116 255deg 260deg,
+        #1c1c22 260deg 265deg, #111116 265deg 270deg,
+        #1c1c22 270deg 275deg, #111116 275deg 280deg,
+        #1c1c22 280deg 285deg, #111116 285deg 290deg,
+        #1c1c22 290deg 295deg, #111116 295deg 300deg,
+        #1c1c22 300deg 305deg, #111116 305deg 310deg,
+        #1c1c22 310deg 315deg, #111116 315deg 320deg,
+        #1c1c22 320deg 325deg, #111116 325deg 330deg,
+        #1c1c22 330deg 335deg, #111116 335deg 340deg,
+        #1c1c22 340deg 345deg, #111116 345deg 350deg,
+        #1c1c22 350deg 355deg, #111116 355deg 360deg
+      );
+      animation: spin 18s linear infinite;
+      opacity: 0.55;
+    }
+    .vinyl::after {
+      content: '';
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 140px; height: 140px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #c8a96e 0%, #8b6a30 40%, #3a2a10 100%);
+      box-shadow: 0 0 40px rgba(200,169,110,0.3);
+    }
+    .vinyl::before {
+      content: '';
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--bg);
+      z-index: 1;
+    }
+    @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+
+    .hero-content { max-width: 600px; position: relative; z-index: 1; }
+
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 1.8rem;
+      opacity: 0; animation: fadeUp 0.7s 0.2s forwards;
+    }
+    .hero-tag::before {
+      content: ''; display: block;
+      width: 28px; height: 1px; background: var(--accent);
+    }
+
+    h1 {
       font-family: var(--font-display);
-      font-size: clamp(2.4rem, 6vw, 5rem);
+      font-size: clamp(3rem, 6vw, 5.2rem);
       font-weight: 700;
       line-height: 1.05;
-      letter-spacing: -0.03em;
-      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.2rem;
+      opacity: 0; animation: fadeUp 0.7s 0.4s forwards;
     }
-    .hero h1 .highlight {
-      background: linear-gradient(135deg, var(--mood-a), var(--mood-b));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      transition: background 0.6s;
-    }
-    .hero p {
-      color: var(--muted);
-      font-size: 1rem;
-      max-width: 420px;
-      margin: 0 auto;
-      line-height: 1.7;
-    }
-
-    /* ── MOOD PICKER ── */
-    .mood-section {
-      position: relative; z-index: 10;
-      padding: 0 2rem 3rem;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-    .mood-label {
-      text-align: center;
-      font-size: 0.72rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 1.5rem;
-    }
-    .mood-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 1rem;
-    }
-    .mood-btn {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.4rem 1rem;
-      cursor: pointer;
-      text-align: center;
-      transition: all 0.25s ease;
-      display: flex; flex-direction: column;
-      align-items: center; gap: 0.6rem;
-      position: relative; overflow: hidden;
-    }
-    .mood-btn::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: linear-gradient(135deg, var(--ma), var(--mb));
-      opacity: 0;
-      transition: opacity 0.3s;
-      border-radius: inherit;
-    }
-    .mood-btn:hover::before, .mood-btn.active::before { opacity: 0.15; }
-    .mood-btn:hover { transform: translateY(-4px); border-color: var(--ma); }
-    .mood-btn.active {
-      border-color: var(--ma);
-      box-shadow: 0 0 24px var(--ma-glow, rgba(255,255,255,0.1));
-    }
-    .mood-emoji {
-      font-size: 2rem;
-      position: relative; z-index: 1;
-      transition: transform 0.3s;
-    }
-    .mood-btn:hover .mood-emoji, .mood-btn.active .mood-emoji { transform: scale(1.2); }
-    .mood-name {
-      font-size: 0.82rem;
-      font-weight: 500;
-      letter-spacing: 0.04em;
-      position: relative; z-index: 1;
-      color: var(--text);
-    }
-    .mood-desc {
-      font-size: 0.7rem;
-      color: var(--muted);
-      position: relative; z-index: 1;
-    }
-
-    /* ── RESULTS ── */
-    .results-section {
-      position: relative; z-index: 10;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 0 2rem 5rem;
-      display: none;
-    }
-    .results-section.visible { display: block; }
-
-    .results-header {
-      display: flex; align-items: center; gap: 1rem;
-      margin-bottom: 2rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid var(--border);
-    }
-    .mood-badge {
-      font-size: 0.7rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      padding: 0.35rem 0.9rem;
-      border-radius: 20px;
-      background: linear-gradient(135deg, var(--mood-a), var(--mood-b));
-      color: #fff;
-      font-weight: 500;
-    }
-    .results-title {
-      font-family: var(--font-display);
-      font-size: 1.4rem;
-      font-weight: 700;
-    }
-    .vibe-text {
-      font-size: 0.85rem;
-      color: var(--muted);
-      margin-left: auto;
+    h1 em {
       font-style: italic;
+      color: var(--accent);
+      display: block;
     }
 
-    /* song cards */
-    .songs-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 1rem;
+    .hero-sub {
+      font-size: 1.05rem;
+      color: var(--muted);
+      margin: 1.5rem 0 2.5rem;
+      line-height: 1.7;
+      max-width: 460px;
+      opacity: 0; animation: fadeUp 0.7s 0.6s forwards;
     }
-    .song-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 1.2rem;
-      display: flex; align-items: center; gap: 1rem;
+
+    .hero-cta {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      opacity: 0; animation: fadeUp 0.7s 0.8s forwards;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.8rem;
+      border-radius: 2px;
+      font-size: 0.82rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
       text-decoration: none;
-      color: inherit;
-      transition: all 0.22s ease;
-      animation: slideUp 0.4s ease both;
-      position: relative; overflow: hidden;
+      font-weight: 500;
+      transition: all 0.2s;
+      cursor: pointer;
     }
-    .song-card::after {
-      content: '';
-      position: absolute; left: 0; top: 0; bottom: 0;
-      width: 3px;
-      background: linear-gradient(to bottom, var(--mood-a), var(--mood-b));
-      border-radius: 3px 0 0 3px;
-      transition: width 0.2s;
+    .btn-primary {
+      background: var(--accent);
+      color: #0a0a0f;
+      border: 1px solid var(--accent);
     }
-    .song-card:hover {
-      transform: translateX(6px);
-      border-color: rgba(255,255,255,0.15);
-      background: #1a1a28;
+    .btn-primary:hover { background: var(--accent2); }
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid rgba(240,236,228,0.2);
     }
-    .song-card:hover::after { width: 5px; }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
 
-    @keyframes slideUp {
+    /* sound wave animation under hero */
+    .wave-bar {
+      position: absolute; bottom: 2.5rem; left: 3rem;
+      display: flex; align-items: flex-end; gap: 3px;
+      opacity: 0.3;
+    }
+    .wave-bar span {
+      display: block; width: 3px;
+      background: var(--accent);
+      border-radius: 2px;
+      animation: wave 1.2s ease-in-out infinite;
+    }
+    .wave-bar span:nth-child(1)  { height: 10px; animation-delay: 0s; }
+    .wave-bar span:nth-child(2)  { height: 22px; animation-delay: 0.1s; }
+    .wave-bar span:nth-child(3)  { height: 14px; animation-delay: 0.2s; }
+    .wave-bar span:nth-child(4)  { height: 32px; animation-delay: 0.15s; }
+    .wave-bar span:nth-child(5)  { height: 18px; animation-delay: 0.3s; }
+    .wave-bar span:nth-child(6)  { height: 26px; animation-delay: 0.05s; }
+    .wave-bar span:nth-child(7)  { height: 12px; animation-delay: 0.25s; }
+    .wave-bar span:nth-child(8)  { height: 20px; animation-delay: 0.1s; }
+    .wave-bar span:nth-child(9)  { height: 8px;  animation-delay: 0.35s; }
+    .wave-bar span:nth-child(10) { height: 16px; animation-delay: 0.2s; }
+    @keyframes wave {
+      0%, 100% { transform: scaleY(1); }
+      50% { transform: scaleY(0.35); }
+    }
+
+    @keyframes fadeUp {
       from { opacity: 0; transform: translateY(20px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    .song-thumb {
-      width: 52px; height: 52px;
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.4rem;
-      flex-shrink: 0;
-      background: linear-gradient(135deg, var(--mood-a), var(--mood-b));
-      opacity: 0.85;
+    /* ── SECTION COMMON ── */
+    section {
+      padding: 7rem 3rem;
+      position: relative;
     }
-    .song-info { flex: 1; min-width: 0; }
-    .song-title {
-      font-weight: 500;
-      font-size: 0.92rem;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      margin-bottom: 0.2rem;
+    .section-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: flex; align-items: center; gap: 0.8rem;
+      margin-bottom: 3rem;
     }
-    .song-artist {
-      font-size: 0.78rem;
-      color: var(--muted);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    .section-label::after {
+      content: ''; flex: 1; max-width: 60px;
+      height: 1px; background: var(--accent); opacity: 0.5;
     }
-    .song-arrow {
-      color: var(--muted);
-      font-size: 1rem;
-      flex-shrink: 0;
-      transition: transform 0.2s, color 0.2s;
-    }
-    .song-card:hover .song-arrow { transform: translateX(4px); color: var(--mood-a); }
-
-    /* vibe description card */
-    .vibe-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.5rem 1.8rem;
-      margin-bottom: 1.8rem;
-      display: flex; align-items: center; gap: 1.2rem;
-    }
-    .vibe-icon { font-size: 2.4rem; }
-    .vibe-card h3 {
+    h2 {
       font-family: var(--font-display);
-      font-size: 1.05rem;
+      font-size: clamp(2rem, 4vw, 3.2rem);
       font-weight: 700;
-      margin-bottom: 0.3rem;
+      line-height: 1.1;
+      margin-bottom: 1rem;
     }
-    .vibe-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
 
-    /* footer */
-    footer {
-      position: relative; z-index: 10;
-      text-align: center;
-      padding: 2rem;
-      font-size: 0.78rem;
+    /* ── ABOUT ── */
+    #about { background: var(--bg2); }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+    .about-text p {
       color: var(--muted);
-      border-top: 1px solid var(--border);
+      line-height: 1.85;
+      margin-bottom: 1.2rem;
+      font-size: 0.98rem;
     }
-    footer a { color: var(--mood-a); text-decoration: none; transition: opacity 0.2s; }
-    footer a:hover { opacity: 0.7; }
+    .about-text p strong { color: var(--accent); font-weight: 500; }
+    .stats-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      padding: 1.6rem;
+      border-radius: 2px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .stat-card:hover { border-color: var(--accent); }
+    .stat-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: var(--accent);
+    }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 0.4rem;
+    }
 
-    @media (max-width: 600px) {
-      header { padding: 1.5rem 1.2rem 0; }
-      .hero { padding: 3rem 1.2rem 2rem; }
-      .mood-section, .results-section { padding-left: 1.2rem; padding-right: 1.2rem; }
-      .mood-grid { grid-template-columns: repeat(3, 1fr); gap: 0.7rem; }
-      .mood-btn { padding: 1rem 0.6rem; border-radius: 12px; }
-      .mood-emoji { font-size: 1.6rem; }
+    /* ── SKILLS ── */
+    #skills { background: var(--bg); }
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+    .skill-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      padding: 1.8rem;
+      border-radius: 2px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .skill-card:hover { transform: translateY(-4px); border-color: rgba(200,169,110,0.45); }
+    .skill-icon {
+      font-size: 1.6rem; margin-bottom: 1rem;
+    }
+    .skill-card h3 {
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 0.7rem;
+      color: var(--accent2);
+    }
+    .skill-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .tag {
+      font-size: 0.74rem;
+      padding: 0.3rem 0.7rem;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+
+    /* ── PROJECTS ── */
+    #projects { background: var(--bg2); }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+    .project-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s;
+      display: flex; flex-direction: column;
+    }
+    .project-card:hover { transform: translateY(-6px); border-color: rgba(200,169,110,0.5); }
+    .project-header {
+      padding: 1.8rem 1.8rem 1rem;
+      border-bottom: 1px solid var(--line);
+      display: flex; justify-content: space-between; align-items: flex-start;
+    }
+    .project-num {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: rgba(200,169,110,0.15);
+      line-height: 1;
+    }
+    .project-links { display: flex; gap: 0.6rem; }
+    .project-links a {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      border: 1px solid var(--line);
+      padding: 0.3rem 0.7rem;
+      border-radius: 1px;
+      transition: all 0.2s;
+    }
+    .project-links a:hover { color: var(--accent); border-color: var(--accent); }
+    .project-body { padding: 1.2rem 1.8rem 1.8rem; flex: 1; }
+    .project-body h3 {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+    }
+    .project-body p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 1rem;
+    }
+    .project-stack { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .project-stack span {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.6rem;
+      background: rgba(200,169,110,0.1);
+      color: var(--accent);
+      border-radius: 2px;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── CONTACT ── */
+    #contact { background: var(--bg); text-align: center; }
+    .contact-inner { max-width: 560px; margin: 0 auto; }
+    .contact-inner h2 { margin-bottom: 1rem; }
+    .contact-inner p { color: var(--muted); line-height: 1.7; margin-bottom: 2.5rem; }
+    .contact-links {
+      display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 2rem 3rem;
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.78rem; color: var(--muted);
+    }
+    footer span { letter-spacing: 0.06em; }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      #hero, section { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .vinyl { width: 280px; height: 280px; right: -100px; opacity: 0.25; }
+      .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+      footer { flex-direction: column; gap: 0.5rem; text-align: center; }
     }
   </style>
 </head>
 <body>
 
-<div class="blob blob-1"></div>
-<div class="blob blob-2"></div>
-
-<header>
-  <div class="logo">Mood<span>Tune</span></div>
-  <div class="tagline">Find your sound</div>
-</header>
-
-<section class="hero">
-  <h1>How are you<br><span class="highlight" id="heroHighlight">feeling today?</span></h1>
-  <p>Pick your mood and we'll curate the perfect playlist vibe for you — with real songs on YouTube.</p>
-</section>
-
-<section class="mood-section">
-  <div class="mood-label">— choose a mood —</div>
-  <div class="mood-grid" id="moodGrid"></div>
-</section>
-
-<section class="results-section" id="results">
-  <div class="results-header">
-    <div class="mood-badge" id="resultsBadge">Happy</div>
-    <div class="results-title" id="resultsTitle">Your playlist vibe</div>
-    <div class="vibe-text" id="vibeText"></div>
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">Rajitha Reddy</span>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#skills">Skills</a>
+    <a href="#projects">Projects</a>
+    <a href="#contact">Contact</a>
   </div>
+</nav>
 
-  <div class="vibe-card" id="vibeCard">
-    <div class="vibe-icon" id="vibeIcon"></div>
-    <div>
-      <h3 id="vibeHeading"></h3>
-      <p id="vibeDesc"></p>
+<!-- HERO -->
+<section id="hero">
+  <div class="vinyl"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Available for opportunities</div>
+    <h1>Rajitha<em>Reddy.</em></h1>
+    <p class="hero-sub">
+      Aspiring web developer with a love for building clean, user-friendly interfaces —
+      and a playlist running in the background at all times.
+    </p>
+    <div class="hero-cta">
+      <a href="#projects" class="btn btn-primary">View Projects</a>
+      <a href="#contact" class="btn btn-outline">Get in Touch</a>
     </div>
   </div>
-
-  <div class="songs-grid" id="songsGrid"></div>
+  <div class="wave-bar">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
 </section>
 
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <div class="section-label">About me</div>
+      <h2>Developer &amp; <em style="font-style:italic;color:var(--accent)">music lover.</em></h2>
+      <p style="margin-top:1.5rem">
+        Hi, I'm Rajitha — a beginner developer on a journey to build real things for the web.
+        I'm currently learning <strong>HTML, CSS, and JavaScript</strong> and working on projects
+        that sharpen my skills every day.
+      </p>
+      <p>
+        Outside of code, music is my constant companion — it keeps me focused, inspired, and
+        always looking for the rhythm in everything I build. I believe great interfaces have
+        a <strong>flow and harmony</strong> just like a good song.
+      </p>
+      <p>
+        I'm looking for my first developer role where I can grow, contribute, and keep learning
+        from people smarter than me.
+      </p>
+    </div>
+    <div class="stats-grid reveal">
+      <div class="stat-card">
+        <div class="stat-num">3+</div>
+        <div class="stat-label">Projects built</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">2025</div>
+        <div class="stat-label">Started coding</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Songs listened</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Commitment</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label">What I work with</div>
+  <h2 class="reveal">Skills &amp; tools.</h2>
+  <div class="skills-grid" style="margin-top:2.5rem">
+    <div class="skill-card reveal">
+      <div class="skill-icon">🎨</div>
+      <h3>Frontend</h3>
+      <div class="skill-tags">
+        <span class="tag">HTML5</span>
+        <span class="tag">CSS3</span>
+        <span class="tag">JavaScript</span>
+        <span class="tag">Responsive Design</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">🛠️</div>
+      <h3>Tools</h3>
+      <div class="skill-tags">
+        <span class="tag">Git</span>
+        <span class="tag">GitHub</span>
+        <span class="tag">VS Code</span>
+        <span class="tag">Chrome DevTools</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">📚</div>
+      <h3>Learning next</h3>
+      <div class="skill-tags">
+        <span class="tag">React</span>
+        <span class="tag">Node.js</span>
+        <span class="tag">Tailwind CSS</span>
+        <span class="tag">APIs</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">🎵</div>
+      <h3>Soft skills</h3>
+      <div class="skill-tags">
+        <span class="tag">Problem solving</span>
+        <span class="tag">Self-learning</span>
+        <span class="tag">Attention to detail</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-label">My work</div>
+  <h2 class="reveal">Featured projects.</h2>
+  <div class="projects-grid" style="margin-top:2.5rem">
+
+    <div class="project-card reveal">
+      <div class="project-header">
+        <div class="project-num">01</div>
+        <div class="project-links">
+          <a href="https://github.com/rajitha150498/Portfolio" target="_blank">GitHub ↗</a>
+          <a href="https://rajitha150498.github.io/Portfolio/" target="_blank">Live ↗</a>
+        </div>
+      </div>
+      <div class="project-body">
+        <h3>Portfolio Website</h3>
+        <p>This very website — a personal developer portfolio built from scratch with HTML, CSS, and JavaScript. Fully responsive and music-themed.</p>
+        <div class="project-stack">
+          <span>HTML</span><span>CSS</span><span>JavaScript</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-header">
+        <div class="project-num">02</div>
+        <div class="project-links">
+          <a href="https://github.com/rajitha150498/Music-Mood-App" target="_blank">GitHub ↗</a>
+          <a href="https://rajitha150498.github.io/Music-Mood-App/" target="_blank">Live ↗</a>
+        </div>
+      </div>
+      <div class="project-body">
+        <h3>Music Mood App</h3>
+        <p>A web app where you pick your mood and get real song suggestions with YouTube links — 8 moods, animated themes, built with vanilla JS.</p>
+        <div class="project-stack">
+          <span>HTML</span><span>CSS</span><span>JavaScript</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-header">
+        <div class="project-num">03</div>
+        <div class="project-links">
+          <a href="https://github.com/rajitha150498/task-tracker" target="_blank">GitHub ↗</a>
+          <a href="https://rajitha150498.github.io/task-tracker/" target="_blank">Live ↗</a>
+        </div>
+      </div>
+      <div class="project-body">
+        <h3>Task Tracker</h3>
+        <p>A clean task manager with priority levels, categories, progress tracking, and localStorage — tasks saved even after closing the browser.</p>
+        <div class="project-stack">
+          <span>HTML</span><span>CSS</span><span>JavaScript</span><span>localStorage</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner reveal">
+    <div class="section-label" style="justify-content:center">Say hello</div>
+    <h2>Let's work<br><em style="font-style:italic;color:var(--accent)">together.</em></h2>
+    <p style="margin-top:1rem">
+      I'm currently open to junior developer roles and internships.
+      If you like what you see — or just want to talk about music — drop me a message.
+    </p>
+    <div class="contact-links">
+      <a href="mailto:rajitha@email.com" class="btn btn-primary">Email me</a>
+      <a href="https://github.com/rajitha150498" target="_blank" class="btn btn-outline">GitHub</a>
+      <a href="https://linkedin.com/" target="_blank" class="btn btn-outline">LinkedIn</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
 <footer>
-  Built with HTML · CSS · JavaScript &nbsp;·&nbsp;
-  Made by <a href="#">Rajitha Reddy</a>
+  <span>© 2025 Rajitha Reddy</span>
+  <span>Built with HTML · CSS · JavaScript</span>
 </footer>
 
 <script>
-  const moods = [
-    {
-      id: 'happy',
-      name: 'Happy',
-      emoji: '😄',
-      desc: 'Feeling good',
-      colorA: '#f9ca24',
-      colorB: '#f0932b',
-      glow: 'rgba(249,202,36,0.25)',
-      vibeHeading: 'Pure good vibes 🌟',
-      vibeDesc: 'Upbeat, bright, and full of energy. Songs that make you want to dance around your room and smile at strangers.',
-      vibeLabel: 'Good Vibes',
-      songs: [
-        { title: 'Happy', artist: 'Pharrell Williams', q: 'Pharrell Williams Happy official' },
-        { title: 'Can\'t Stop the Feeling', artist: 'Justin Timberlake', q: 'Justin Timberlake Can\'t Stop the Feeling' },
-        { title: 'Good as Hell', artist: 'Lizzo', q: 'Lizzo Good as Hell official' },
-        { title: 'Uptown Funk', artist: 'Mark Ronson ft. Bruno Mars', q: 'Mark Ronson Uptown Funk Bruno Mars' },
-        { title: 'Walking on Sunshine', artist: 'Katrina & The Waves', q: 'Walking on Sunshine Katrina Waves' },
-        { title: 'Shake It Off', artist: 'Taylor Swift', q: 'Taylor Swift Shake It Off official' },
-      ]
-    },
-    {
-      id: 'sad',
-      name: 'Sad',
-      emoji: '😢',
-      desc: 'Need a cry',
-      colorA: '#74b9ff',
-      colorB: '#a29bfe',
-      glow: 'rgba(116,185,255,0.2)',
-      vibeHeading: 'Let it out 🌧️',
-      vibeDesc: 'Sometimes you just need music that understands you. These songs sit with you in the quiet, rainy moments.',
-      vibeLabel: 'Melancholic',
-      songs: [
-        { title: 'Someone Like You', artist: 'Adele', q: 'Adele Someone Like You official' },
-        { title: 'The Night We Met', artist: 'Lord Huron', q: 'Lord Huron The Night We Met' },
-        { title: 'Skinny Love', artist: 'Bon Iver', q: 'Bon Iver Skinny Love official' },
-        { title: 'Fix You', artist: 'Coldplay', q: 'Coldplay Fix You official' },
-        { title: 'Let Her Go', artist: 'Passenger', q: 'Passenger Let Her Go official' },
-        { title: 'Liability', artist: 'Lorde', q: 'Lorde Liability official' },
-      ]
-    },
-    {
-      id: 'hype',
-      name: 'Hype',
-      emoji: '🔥',
-      desc: 'Pump it up',
-      colorA: '#ff4757',
-      colorB: '#ff6348',
-      glow: 'rgba(255,71,87,0.25)',
-      vibeHeading: 'Turn it UP 🔊',
-      vibeDesc: 'Maximum energy. Gym, gaming, running — whatever needs fuel, these tracks will absolutely deliver.',
-      vibeLabel: 'Maximum Energy',
-      songs: [
-        { title: 'SICKO MODE', artist: 'Travis Scott', q: 'Travis Scott SICKO MODE official' },
-        { title: 'Lose Yourself', artist: 'Eminem', q: 'Eminem Lose Yourself official' },
-        { title: 'Power', artist: 'Kanye West', q: 'Kanye West Power official' },
-        { title: 'Humble', artist: 'Kendrick Lamar', q: 'Kendrick Lamar Humble official' },
-        { title: 'Thunderstruck', artist: 'AC/DC', q: 'ACDC Thunderstruck official' },
-        { title: 'Blinding Lights', artist: 'The Weeknd', q: 'The Weeknd Blinding Lights official' },
-      ]
-    },
-    {
-      id: 'chill',
-      name: 'Chill',
-      emoji: '😌',
-      desc: 'Take it easy',
-      colorA: '#00cec9',
-      colorB: '#55efc4',
-      glow: 'rgba(0,206,201,0.2)',
-      vibeHeading: 'Easy does it 🍃',
-      vibeDesc: 'Smooth, mellow, and effortlessly cool. Perfect for lazy afternoons, late nights, or just breathing.',
-      vibeLabel: 'Lo-fi Chill',
-      songs: [
-        { title: 'Redbone', artist: 'Childish Gambino', q: 'Childish Gambino Redbone official' },
-        { title: 'Ivy', artist: 'Frank Ocean', q: 'Frank Ocean Ivy official' },
-        { title: 'Breathin', artist: 'Ariana Grande', q: 'Ariana Grande Breathin official' },
-        { title: 'Best Part', artist: 'Daniel Caesar ft. H.E.R.', q: 'Daniel Caesar Best Part HER official' },
-        { title: 'Retrograde', artist: 'James Blake', q: 'James Blake Retrograde official' },
-        { title: 'After Hours', artist: 'The Weeknd', q: 'The Weeknd After Hours official' },
-      ]
-    },
-    {
-      id: 'romantic',
-      name: 'Romantic',
-      emoji: '💕',
-      desc: 'Feeling love',
-      colorA: '#fd79a8',
-      colorB: '#e84393',
-      glow: 'rgba(253,121,168,0.22)',
-      vibeHeading: 'In the mood for love 💖',
-      vibeDesc: 'Soft, warm, and full of feeling. Whether you\'re falling in love or reminiscing — these songs get it.',
-      vibeLabel: 'Love Vibes',
-      songs: [
-        { title: 'Perfect', artist: 'Ed Sheeran', q: 'Ed Sheeran Perfect official' },
-        { title: 'All of Me', artist: 'John Legend', q: 'John Legend All of Me official' },
-        { title: 'At Last', artist: 'Etta James', q: 'Etta James At Last official' },
-        { title: 'Make You Feel My Love', artist: 'Adele', q: 'Adele Make You Feel My Love' },
-        { title: 'Thinking Out Loud', artist: 'Ed Sheeran', q: 'Ed Sheeran Thinking Out Loud official' },
-        { title: 'Just the Way You Are', artist: 'Bruno Mars', q: 'Bruno Mars Just The Way You Are official' },
-      ]
-    },
-    {
-      id: 'focus',
-      name: 'Focus',
-      emoji: '🎯',
-      desc: 'Deep work',
-      colorA: '#6c5ce7',
-      colorB: '#a29bfe',
-      glow: 'rgba(108,92,231,0.22)',
-      vibeHeading: 'In the zone 🧠',
-      vibeDesc: 'No distractions. Just you, the task, and music that locks you in. Flow state incoming.',
-      vibeLabel: 'Deep Focus',
-      songs: [
-        { title: 'Experience', artist: 'Ludovico Einaudi', q: 'Ludovico Einaudi Experience official' },
-        { title: 'Comptine d\'un autre été', artist: 'Yann Tiersen', q: 'Yann Tiersen Comptine autre ete' },
-        { title: 'Clair de Lune', artist: 'Claude Debussy', q: 'Debussy Clair de Lune piano' },
-        { title: 'Intro', artist: 'The xx', q: 'The xx Intro official' },
-        { title: 'Svefn-g-englar', artist: 'Sigur Rós', q: 'Sigur Ros Svefn g englar' },
-        { title: 'On The Nature of Daylight', artist: 'Max Richter', q: 'Max Richter On The Nature Of Daylight' },
-      ]
-    },
-    {
-      id: 'angry',
-      name: 'Angry',
-      emoji: '😤',
-      desc: 'Let it out',
-      colorA: '#e17055',
-      colorB: '#d63031',
-      glow: 'rgba(214,48,49,0.22)',
-      vibeHeading: 'Release the tension ⚡',
-      vibeDesc: 'Frustration needs an outlet. These tracks hit hard, channel the energy, and somehow make everything feel better.',
-      vibeLabel: 'Release Mode',
-      songs: [
-        { title: 'Break Stuff', artist: 'Limp Bizkit', q: 'Limp Bizkit Break Stuff official' },
-        { title: 'Given Up', artist: 'Linkin Park', q: 'Linkin Park Given Up official' },
-        { title: 'Bulls on Parade', artist: 'Rage Against the Machine', q: 'Rage Against Machine Bulls on Parade' },
-        { title: 'Killing in the Name', artist: 'Rage Against the Machine', q: 'Rage Against Machine Killing In The Name' },
-        { title: 'Break My Soul', artist: 'Beyoncé', q: 'Beyonce Break My Soul official' },
-        { title: 'Smells Like Teen Spirit', artist: 'Nirvana', q: 'Nirvana Smells Like Teen Spirit official' },
-      ]
-    },
-    {
-      id: 'nostalgic',
-      name: 'Nostalgic',
-      emoji: '🌅',
-      desc: 'Old memories',
-      colorA: '#fdcb6e',
-      colorB: '#e17055',
-      glow: 'rgba(253,203,110,0.2)',
-      vibeHeading: 'Back in time 📼',
-      vibeDesc: 'Warm, golden, and a little bittersweet. Songs that take you back to a moment you can almost touch.',
-      vibeLabel: 'Throwback',
-      songs: [
-        { title: 'Dreams', artist: 'Fleetwood Mac', q: 'Fleetwood Mac Dreams official' },
-        { title: 'Africa', artist: 'Toto', q: 'Toto Africa official' },
-        { title: 'Take On Me', artist: 'a-ha', q: 'a-ha Take On Me official' },
-        { title: 'Don\'t You (Forget About Me)', artist: 'Simple Minds', q: 'Simple Minds Don\'t You Forget About Me' },
-        { title: 'Come On Eileen', artist: 'Dexys Midnight Runners', q: 'Dexys Midnight Runners Come On Eileen' },
-        { title: 'Vienna', artist: 'Ultravox', q: 'Ultravox Vienna official' },
-      ]
-    },
-  ];
-
-  // Render mood buttons
-  const grid = document.getElementById('moodGrid');
-  moods.forEach(mood => {
-    const btn = document.createElement('button');
-    btn.className = 'mood-btn';
-    btn.dataset.id = mood.id;
-    btn.style.setProperty('--ma', mood.colorA);
-    btn.style.setProperty('--mb', mood.colorB);
-    btn.style.setProperty('--ma-glow', mood.glow);
-    btn.innerHTML = `
-      <div class="mood-emoji">${mood.emoji}</div>
-      <div class="mood-name">${mood.name}</div>
-      <div class="mood-desc">${mood.desc}</div>
-    `;
-    btn.addEventListener('click', () => selectMood(mood, btn));
-    grid.appendChild(btn);
-  });
-
-  function selectMood(mood, btn) {
-    // update active button
-    document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-
-    // update css vars
-    document.documentElement.style.setProperty('--mood-a', mood.colorA);
-    document.documentElement.style.setProperty('--mood-b', mood.colorB);
-    document.documentElement.style.setProperty('--glow', mood.glow);
-
-    // update hero
-    document.getElementById('heroHighlight').textContent = `${mood.name.toLowerCase()} today?`;
-
-    // update logo accent
-    document.querySelector('.logo span').style.color = mood.colorA;
-
-    // fill results
-    document.getElementById('resultsBadge').textContent = mood.vibeLabel;
-    document.getElementById('resultsBadge').style.background =
-      `linear-gradient(135deg, ${mood.colorA}, ${mood.colorB})`;
-    document.getElementById('resultsTitle').textContent = `Your ${mood.name.toLowerCase()} playlist`;
-    document.getElementById('vibeText').textContent = `${mood.songs.length} songs picked for you`;
-    document.getElementById('vibeIcon').textContent = mood.emoji;
-    document.getElementById('vibeHeading').textContent = mood.vibeHeading;
-    document.getElementById('vibeDesc').textContent = mood.vibeDesc;
-
-    // render song cards
-    const songsGrid = document.getElementById('songsGrid');
-    songsGrid.innerHTML = '';
-    mood.songs.forEach((song, i) => {
-      const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(song.q)}`;
-      const card = document.createElement('a');
-      card.className = 'song-card';
-      card.href = url;
-      card.target = '_blank';
-      card.rel = 'noopener noreferrer';
-      card.style.animationDelay = `${i * 0.07}s`;
-      card.innerHTML = `
-        <div class="song-thumb">${mood.emoji}</div>
-        <div class="song-info">
-          <div class="song-title">${song.title}</div>
-          <div class="song-artist">${song.artist}</div>
-        </div>
-        <div class="song-arrow">↗</div>
-      `;
-      songsGrid.appendChild(card);
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+        observer.unobserve(e.target);
+      }
     });
-
-    // show results
-    const results = document.getElementById('results');
-    results.classList.add('visible');
-    setTimeout(() => results.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
-  }
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
 </script>
 </body>
 </html>
